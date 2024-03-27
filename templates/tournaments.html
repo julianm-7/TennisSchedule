@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Tournaments</title>
+    </head>
+    <body>
+        <h1>Tournaments</h1>
+        <table border = 1>
+            <thead>
+                <td>Name</td>
+                <td>Registration Opens</td>
+                <td>Registgration Closes</td>
+                <td>Cost</td>
+                <td>Country</td>
+            </thead>
+            
+            {% for row in rows %}
+                <tr>
+                <td>{{row[0]}}</td>
+                <td>{{row[1]}}</td>
+                <td>{{row[2]}}</td>
+                <td>{{row[3]}}</td>
+                <td>{{row[4]}}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        
+        <a href = "/">Go back to home page</a>
+        
+    </body>
+</html>

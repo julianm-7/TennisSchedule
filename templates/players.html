@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Players</title>
+    </head>
+    <body>
+        <h1>Players</h1>
+        <table border = 1>
+            <thead>
+                <td>ID</td>
+                <td>Name</td>
+                <td>Ranking</td>
+                <td>Age</td>
+                <td>Gender</td>
+                <td>Home Country</td>
+            </thead>
+            
+            {% for row in rows %}
+                <tr>
+                <td>{{row[0]}}</td>
+                <td>{{row[1]}}</td>
+                <td>{{row[2]}}</td>
+                <td>{{row[3]}}</td>
+                <td>{{row[4]}}</td>
+                <td>{{row[5]}}</td>		
+                </tr>
+            {% endfor %}
+        </table>
+        
+        <a href = "/">Go back to home page</a>
+        
+    </body>
+</html>

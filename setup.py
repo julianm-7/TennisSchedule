@@ -18,15 +18,17 @@ cur = conn.cursor()
 if __name__ == '__main__':
     
     '''
+    
     cur.execute("""CREATE TABLE Player(
         playerID INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR (140),
         ranking INT,
         age INT NOT NULL, 
         gender CHAR(6) NOT NULL,
         originCountry VARCHAR(64) NOT NULL);""")
         
     cur.execute("""CREATE TABLE Tournament(
-        tournamentID INT AUTO_INCREMENT PRIMARY KEY,
+        tournamentName VARCHAR(64) PRIMARY KEY,
         registrationDate DATE NOT NULL,
         deadlineDate DATE NOT NULL, 
         cost INT NOT NULL,
@@ -39,13 +41,13 @@ if __name__ == '__main__':
         
     cur.execute("""CREATE TABLE CompetesIn(
         playerID INT,
-        tournamentID INT,
+        tournamentName VARCHAR(64),
         wins INT,
         losses INT,
         date DATE,
-        PRIMARY KEY (playerID, tournamentID),
+        PRIMARY KEY (playerID, tournamentName),
         FOREIGN KEY (playerID) REFERENCES Player(playerID),
-        FOREIGN KEY (tournamentID) REFERENCES Tournament(tournamentID));""")
+        FOREIGN KEY (tournamentName) REFERENCES Tournament(tournamentName));""")
         
     cur.execute("""CREATE TABLE PlaysAt(
         playerID INT,
@@ -57,10 +59,16 @@ if __name__ == '__main__':
         FOREIGN KEY (stadiumName) REFERENCES Stadium(stadiumName));""")
         
     cur.execute("""CREATE TABLE HostedAt(
-        tournamentID INT,
+        tournamentName VARCHAR(64),
         stadiumName VARCHAR(64),
-        PRIMARY KEY (tournamentID, stadiumName),
-        FOREIGN KEY (tournamentID) REFERENCES Tournament(tournamentID),
+        PRIMARY KEY (tournamentName, stadiumName),
+        FOREIGN KEY (tournamentName) REFERENCES Tournament(tournamentName),
         FOREIGN KEY (stadiumName) REFERENCES Stadium(stadiumName));""")
     '''    
     conn.close()
+
+
+## establishing connection with MySQL server
+    """
+    using mysql.connector.connect
+    """

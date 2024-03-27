@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Other Data</title>
+    </head>
+    <body>
+        <h1>Other Data</h1>
+        <h3>Plays At</h3>
+        <table border = 1>
+            <thead>
+                <td>Player</td>
+                <td>Stadium</td>
+            </thead>
+            
+            {% for row in playsAt %}
+                <tr>
+                <td>{{row[0]}}</td>
+                <td>{{row[1]}}</td>
+                </tr>
+            {% endfor %}
+        </table>
+
+        <h3>Hosted At</h3>
+        <table border = 1>
+            <thead>
+                <td>Tournament</td>
+                <td>Stadium</td>
+            </thead>
+            
+            {% for row in hostedAt %}
+                <tr>
+                <td>{{row[0]}}</td>
+                <td>{{row[1]}}</td>
+                </tr>
+            {% endfor %}
+        </table>
+
+        <h3>Competes In</h3>
+        <table border = 1>
+            <thead>
+                <td>Player</td>
+                <td>Tournament</td>
+            </thead>
+            
+            {% for row in competesIn %}
+                <tr>
+                <td>{{row[0]}}</td>
+                <td>{{row[1]}}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        
+        <a href = "/">Go back to home page</a>
+        
+    </body>
+</html>
