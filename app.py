@@ -13,7 +13,7 @@ def home():
 def players():
     con = database()
     con.row_factory = sql.Row
-    cur = con.cursor()
+    cur = con.cursor(dictionary=True)
         
     cur.execute('''SELECT * FROM Player''')
         
@@ -25,7 +25,7 @@ def players():
 def tournaments():
     con = database()
     con.row_factory = sql.Row
-    cur = con.cursor()
+    cur = con.cursor(dictionary=True)
         
     cur.execute('''SELECT * FROM Tournament''')
         
@@ -37,7 +37,7 @@ def tournaments():
 def stadiums():
     con = database()
     con.row_factory = sql.Row
-    cur = con.cursor()
+    cur = con.cursor(dictionary=True)
         
     cur.execute('''SELECT * FROM Stadium''')
     rows = cur.fetchall()
@@ -48,7 +48,7 @@ def stadiums():
 def other():
     con = database()
     con.row_factory = sql.Row
-    cur = con.cursor()
+    cur = con.cursor(dictionary=True)
         
     cur.execute('''SELECT * FROM PlaysAt''')
     playsAt = cur.fetchall()
