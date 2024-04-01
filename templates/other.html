@@ -1,56 +1,54 @@
-<!doctype html>
-<html>
-    <head>
-        <title>Other Data</title>
-    </head>
-    <body>
+{% extends 'index.html' %}
+
+{% block title %}Other Data{% endblock %}
+
+{% block content %}
+    <div class="container">
         <h1>Other Data</h1>
         <h3>Plays At</h3>
-        <table border = 1>
+        <table class="table table-bordered blackBorder">
             <thead>
                 <td>Player</td>
                 <td>Stadium</td>
             </thead>
-            
+                
             {% for row in playsAt %}
                 <tr>
-                <td>{{row[0]}}</td>
-                <td>{{row[1]}}</td>
+                <td>{{row['name']}}</td>
+                <td>{{row['stadiumName']}}</td>
                 </tr>
             {% endfor %}
         </table>
 
         <h3>Hosted At</h3>
-        <table border = 1>
+        <table class="table table-bordered blackBorder">
             <thead>
                 <td>Tournament</td>
                 <td>Stadium</td>
             </thead>
-            
+                
             {% for row in hostedAt %}
                 <tr>
-                <td>{{row[0]}}</td>
-                <td>{{row[1]}}</td>
+                <td>{{row['tournamentName']}}</td>
+                <td>{{row['stadiumName']}}</td>
                 </tr>
             {% endfor %}
         </table>
 
         <h3>Competes In</h3>
-        <table border = 1>
+        <table class="table table-bordered blackBorder">
             <thead>
                 <td>Player</td>
                 <td>Tournament</td>
             </thead>
-            
+                
             {% for row in competesIn %}
                 <tr>
-                <td>{{row[0]}}</td>
-                <td>{{row[1]}}</td>
+                <td>{{row['name']}}</td>
+                <td>{{row['tournamentName']}}</td>
                 </tr>
             {% endfor %}
         </table>
+    </div>
         
-        <a href = "/">Go back to home page</a>
-        
-    </body>
-</html>
+{% endblock %}

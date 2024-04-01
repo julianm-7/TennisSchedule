@@ -1,17 +1,17 @@
-<!doctype html>
-<html>
-    <head>
-        <title>Stadiums</title>
-    </head>
-    <body>
+{% extends 'index.html' %}
+
+{% block title %}Stadiums{% endblock %}
+
+{% block content %}
+    <div class="container">
         <h1>Stadiums</h1>
-        <table border = 1>
+        <table class="table table-bordered blackBorder">
             <thead>
                 <td>Name</td>
                 <td>Surface</td>
                 <td>Occupancy</td>
             </thead>
-            
+                
             {% for row in rows %}
                 <tr>
                 <td>{{row['stadiumName']}}</td>
@@ -20,8 +20,6 @@
                 </tr>
             {% endfor %}
         </table>
-        
-        <a href = "/">Go back to home page</a>
-        
-    </body>
-</html>
+    </div>
+    
+{% endblock %}

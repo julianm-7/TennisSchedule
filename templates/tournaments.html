@@ -1,11 +1,11 @@
-<!doctype html>
-<html>
-    <head>
-        <title>Tournaments</title>
-    </head>
-    <body>
+{% extends 'index.html' %}
+
+{% block title %}Tournaments {% endblock %}
+
+{% block content %}
+    <div class="container">
         <h1>Tournaments</h1>
-        <table border = 1>
+        <table class="table table-bordered blackBorder">
             <thead>
                 <td>Name</td>
                 <td>Registration Opens</td>
@@ -13,19 +13,16 @@
                 <td>Cost</td>
                 <td>Country</td>
             </thead>
-            
+                
             {% for row in rows %}
                 <tr>
-                <td>{{row[0]}}</td>
-                <td>{{row[1]}}</td>
-                <td>{{row[2]}}</td>
-                <td>{{row[3]}}</td>
-                <td>{{row[4]}}</td>
+                <td>{{row['tournamentName']}}</td>
+                <td>{{row['registrationDate']}}</td>
+                <td>{{row['deadlineDate']}}</td>
+                <td>{{row['cost']}}</td>
+                <td>{{row['country']}}</td>
                 </tr>
             {% endfor %}
         </table>
-        
-        <a href = "/">Go back to home page</a>
-        
-    </body>
-</html>
+    </div>
+{% endblock %}

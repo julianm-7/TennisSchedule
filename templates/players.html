@@ -1,13 +1,11 @@
-<!doctype html>
-<html>
-    <head>
-        <meta charset="utf-8"/>
-        <meta name="viewport" content="witdh=device-width, initial-scale=1"/>
-        <title>Players</title>
-    </head>
-    <body>
+{% extends 'index.html' %}
+
+{% block title %}Players{% endblock %}
+ 
+{% block content %}
+    <div class="container">
         <h1>Players</h1>
-        <table border = 1>
+        <table class=" table table-bordered blackBorder">
             <thead>
                 <td>ID</td>
                 <td>Name</td>
@@ -16,7 +14,7 @@
                 <td>Gender</td>
                 <td>Home Country</td>
             </thead>
-            
+                
             {% for row in rows %}
                 <tr>
                 <td>{{row['playerID']}}</td>
@@ -28,8 +26,5 @@
                 </tr>
             {% endfor %}
         </table>
-        
-        <a href = "/">Go back to home page</a>
-        
-    </body>
-</html>
+    </div>
+{% endblock %}
