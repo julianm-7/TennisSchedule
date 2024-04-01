@@ -1,0 +1,8 @@
+.blackBorder {
+    border: #000000
+    
+}
+
+.blackBorder thead {
+    font-weight: bold;
+}
