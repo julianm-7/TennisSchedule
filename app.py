@@ -2,6 +2,7 @@ from setup import database
 from flask import Flask, render_template, request
 import sqlite3 as sql
 import mysql.connector
+from Format import FormatDate
 
 app = Flask(__name__)
 
@@ -31,6 +32,10 @@ def tournaments():
         
     rows = cur.fetchall()
     con.close()
+    
+    for row in rows:
+        row['registrationDate'] = FormatDate(row['registrationDate'])
+        row['deadlineDate'] = FormatDate(row['deadlineDate'])
     return render_template("tournaments.html", rows = rows)
 
 @app.route('/stadiums')
