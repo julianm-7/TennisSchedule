@@ -50,11 +50,11 @@ def other():
     con.row_factory = sql.Row
     cur = con.cursor(dictionary=True)
         
-    cur.execute('''SELECT * FROM PlaysAt''')
+    cur.execute('''SELECT name, stadiumName FROM PlaysAt,Player WHERE PlaysAt.playerID = Player.playerID''')
     playsAt = cur.fetchall()
-    cur.execute('''SELECT * FROM HostedAt''')
+    cur.execute('''SELECT tournamentName, stadiumName FROM HostedAt''')
     hostedAt = cur.fetchall()
-    cur.execute('''SELECT * FROM CompetesIn''')
+    cur.execute('''SELECT name, tournamentName FROM CompetesIn, Player WHERE CompetesIn.playerID = Player.playerID''')
     competesIn = cur.fetchall()
     con.close()
     return render_template('other.html', playsAt = playsAt, hostedAt = hostedAt, competesIn = competesIn)
