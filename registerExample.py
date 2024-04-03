@@ -1,0 +1,30 @@
+{%extends 'index.html'%}
+{%block title%}Sign Up{%endblock%}
+{%block content%}
+    <body>
+        <div class="box">
+            <h1>Sign up for Pet Sitter App</h1>
+            <form action="{{url_for('register')}}" method="POST">
+                <div class="data">
+                    <div class="msg">
+                        <p id="error">{{error}}</p>
+                    </div>
+                    <br>First name: <input type="text" name="firstName" required>
+                    <br>Last name: <input type="text" name="lastName" required>
+                    <br>Birthdate: <input type="date" name="birthdate" required>
+                    <br>City: <input type="text" name="city" required>
+                    <br>State: <input type="text" name="state" required>
+                    <br>Account Type: <select name="type">
+                        <option value="petOwner">Pet Owner</option>
+                        <option value="petSitter">Pet Sitter</option>
+                    </select>
+                    <br>Email: <input type="email" name="email" required>
+                    <br>Username: <input type="text" name="username" required maxlength="32">
+                    <br>Password (8 characters min): <input type="password" name="password" minlength="8" required>
+                    <br><input type="submit" value="Sign up">
+                </div>
+            </form>
+            <p>Already have an account? <a href="/login"> Sign in now.</a></p>
+        </div>
+    </body>
+{%endblock%}

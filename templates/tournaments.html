@@ -1,28 +1,38 @@
 {% extends 'index.html' %}
 
-{% block title %}Tournaments {% endblock %}
+{% block title %}Tournaments{% endblock %}
 
 {% block content %}
     <div class="container">
         <h3>Tournaments</h3>
-        <table class="table table-bordered blackBorder">
-            <thead>
-                <td>Name</td>
-                <td>Registration Opens</td>
-                <td>Registgration Closes</td>
-                <td>Cost</td>
-                <td>Country</td>
-            </thead>
-                
-            {% for row in rows %}
+        <form action="{{url_for('tournaments')}}" method="POST">
+            <table class="table table-bordered blackBorder">
+                <thead>
+                    <td>Name</td>
+                    <td>Registration Opens</td>
+                    <td>Registration Closes</td>
+                    <td>Cost</td>
+                    <td>Country</td>
+                </thead>
+                    
+                {% for row in rows %}
+                    <tr>
+                    <td>{{row['tournamentName']}}</td>
+                    <td>{{row['registrationDate']}}</td>
+                    <td>{{row['deadlineDate']}}</td>
+                    <td>${{row['cost']}}</td>
+                    <td>{{row['country']}}</td>
+                    </tr>
+                {% endfor %}
                 <tr>
-                <td>{{row['tournamentName']}}</td>
-                <td>{{row['registrationDate']}}</td>
-                <td>{{row['deadlineDate']}}</td>
-                <td>{{row['cost']}}</td>
-                <td>{{row['country']}}</td>
+                    <td><input type="text" name="name" placeholder="name" required></td>
+                    <td><input type="date" name="opens" placeholder="opens" required></td>
+                    <td><input type="date" name="closes" placeholder="closes" required></td>
+                    <td>$<input type="number" name="cost" placeholder="cost" required></td>
+                    <td><input type="text" name="country" placeholder="country" required></td>
                 </tr>
-            {% endfor %}
-        </table>
+            </table>
+            <input type="submit" value="Add Tournament">
+        </form>
     </div>
 {% endblock %}

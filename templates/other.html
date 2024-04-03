@@ -6,49 +6,114 @@
     <div class="container">
         <h3>Other Data</h3>
         <h5>Plays At</h5>
-        <table class="table table-bordered blackBorder">
-            <thead>
-                <td>Player</td>
-                <td>Stadium</td>
-            </thead>
-                
-            {% for row in playsAt %}
+        <form>
+            <table class="table table-bordered blackBorder">
+                <thead>
+                    <td>Player</td>
+                    <td>Stadium</td>
+                </thead>
+                    
+                {% for row in playsAt %}
+                    <tr>
+                    <td>{{row['name']}}</td>
+                    <td>{{row['stadiumName']}}</td>
+                    </tr>
+                {% endfor %}
                 <tr>
-                <td>{{row['name']}}</td>
-                <td>{{row['stadiumName']}}</td>
+                    <td>
+                        <select name="player" id="player-select" required>
+                           <option disabled selected value="">Player</option>
+                           {% for row in players %}
+                                <option value="{{row['playerId']}}">{{row['name']}}</option>
+                           {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <select name="stadium" id="stadium-select" required>
+                           <option disabled selected value="">Stadium</option>
+                           {% for row in stadiums %}
+                                <option value="{{row['stadiumName']}}">{{row['stadiumName']}}</option>
+                           {% endfor %}
+                        </select>
+                    </td>
                 </tr>
-            {% endfor %}
-        </table>
+            </table>
+            <input type="submit" value="Add">
+        </form>
+        <br>
 
         <h5>Hosted At</h5>
-        <table class="table table-bordered blackBorder">
-            <thead>
-                <td>Tournament</td>
-                <td>Stadium</td>
-            </thead>
-                
-            {% for row in hostedAt %}
+        <form>
+            <table class="table table-bordered blackBorder">
+                <thead>
+                    <td>Tournament</td>
+                    <td>Stadium</td>
+                </thead>
+                    
+                {% for row in hostedAt %}
+                    <tr>
+                    <td>{{row['tournamentName']}}</td>
+                    <td>{{row['stadiumName']}}</td>
+                    </tr>
+                {% endfor %}
                 <tr>
-                <td>{{row['tournamentName']}}</td>
-                <td>{{row['stadiumName']}}</td>
+                    <td>
+                        <select name="tournament" id="tournament-select" required>
+                           <option disabled selected value="">Tournament</option>
+                           {% for row in tournaments %}
+                                <option value="{{row['tournamentName']}}">{{row['tournamentName']}}</option>
+                           {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <select name="stadium" id="stadium-select" required>
+                           <option disabled selected value="">Stadium</option>
+                           {% for row in stadiums %}
+                                <option value="{{row['stadiumName']}}">{{row['stadiumName']}}</option>
+                           {% endfor %}
+                        </select>
+                    </td>
                 </tr>
-            {% endfor %}
-        </table>
+            </table>
+            <input type="submit" value="Add">
+        </form>
+        <br>
 
         <h5>Competes In</h5>
-        <table class="table table-bordered blackBorder">
-            <thead>
-                <td>Player</td>
-                <td>Tournament</td>
-            </thead>
-                
-            {% for row in competesIn %}
+        <form>
+            <table class="table table-bordered blackBorder">
+                <thead>
+                    <td>Player</td>
+                    <td>Tournament</td>
+                </thead>
+                    
+                {% for row in competesIn %}
+                    <tr>
+                    <td>{{row['name']}}</td>
+                    <td>{{row['tournamentName']}}</td>
+                    </tr>
+                {% endfor %}
                 <tr>
-                <td>{{row['name']}}</td>
-                <td>{{row['tournamentName']}}</td>
+                    <td>
+                        <select name="player" id="player-select" required>
+                           <option disabled selected value="">Player</option>
+                           {% for row in players %}
+                                <option value="{{row['playerId']}}">{{row['name']}}</option>
+                           {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <select name="tournament" id="tournament-select" required>
+                           <option disabled selected value="">Tournament</option>
+                           {% for row in tournaments %}
+                                <option value="{{row['tournamentName']}}">{{row['tournamentName']}}</option>
+                           {% endfor %}
+                        </select>
+                    </td>
                 </tr>
-            {% endfor %}
-        </table>
+            </table>
+            <input type="submit" value="Add">
+        </form>
     </div>
         
 {% endblock %}

@@ -5,26 +5,43 @@
 {% block content %}
     <div class="container">
         <h3>Players</h3>
-        <table class=" table table-bordered blackBorder">
-            <thead>
-                <td>ID</td>
-                <td>Name</td>
-                <td>Ranking</td>
-                <td>Age</td>
-                <td>Gender</td>
-                <td>Home Country</td>
-            </thead>
-                
-            {% for row in rows %}
+        <form action="{{url_for('players')}}" method="POST">
+            <table class=" table table-bordered blackBorder">
+                <thead>
+                    <td>ID</td>
+                    <td>Name</td>
+                    <td>Ranking</td>
+                    <td>Age</td>
+                    <td>Gender</td>
+                    <td>Home Country</td>
+                </thead>
+                    
+                {% for row in rows %}
+                    <tr>
+                        <td>{{row['playerID']}}</td>
+                        <td>{{row['name']}}</td>
+                        <td>{{row['ranking']}}</td>
+                        <td>{{row['age']}}</td>
+                        <td>{{row['gender']}}</td>
+                        <td>{{row['originCountry']}}</td>		
+                    </tr>
+                {% endfor %}
                 <tr>
-                <td>{{row['playerID']}}</td>
-                <td>{{row['name']}}</td>
-                <td>{{row['ranking']}}</td>
-                <td>{{row['age']}}</td>
-                <td>{{row['gender']}}</td>
-                <td>{{row['originCountry']}}</td>		
+                    <td>...</td>
+                    <td><input type="text" name="name" placeholder="name" required></td>
+                    <td><input type="number" name="ranking" placeholder="ranking" required></td>
+                    <td><input type="number" name="age" placeholder="age" required></td>
+                    <td>
+                        <select name="gender" id="gender-select" required>
+                            <option disabled selected value="">Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </td>
+                    <td><input type="text" name="country" placeholder="home country" required></td>
                 </tr>
-            {% endfor %}
-        </table>
+            </table>
+            <input type="submit" value="Add Player">
+        </form>
     </div>
 {% endblock %}
