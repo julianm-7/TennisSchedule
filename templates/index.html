@@ -21,19 +21,19 @@
               <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                   <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="/">Home</a>
+                    <a class="nav-link {{'active' if path == '/' else ''}}" href="/">Home</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="/players">Players</a>
+                    <a class="nav-link {{'active' if path == '/players' else ''}}" href="/players">Players</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="/tournaments">Tournaments</a>
+                    <a class="nav-link {{'active' if path == '/tournaments' else ''}}" href="/tournaments">Tournaments</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="/stadiums">Stadiums</a>
+                    <a class="nav-link {{'active' if path == '/stadiums' else ''}}" href="/stadiums">Stadiums</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="/other">Other</a>
+                    <a class="nav-link {{'active' if path == '/other' else ''}}" href="/other">Other</a>
                   </li>
                 </ul>
               </div>
