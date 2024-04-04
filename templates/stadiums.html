@@ -4,6 +4,7 @@
 
 {% block content %}
     <div class="container">
+        <br>
         <h3>Stadiums</h3>
         <form action="{{url_for('stadiums')}}" method="POST">
             <table class="table table-bordered blackBorder">
@@ -11,6 +12,8 @@
                     <td>Name</td>
                     <td>Surface</td>
                     <td>Occupancy</td>
+                    <td>Edit</td>
+                    <td>Delete</td>
                 </thead>
                     
                 {% for row in rows %}
@@ -18,6 +21,8 @@
                     <td>{{row['stadiumName']}}</td>
                     <td>{{row['surface']}}</td>
                     <td>{{row['occupancy']}}</td>
+                    <td><a href="/edit-stadium/{{row['stadiumName']}}" class="btn btn-secondary"><i class="bi bi-pencil"></i></a></td>
+                    <td><a href="/delete-stadium/{{row['stadiumName']}}" class="btn btn-danger"><i class="bi bi-trash3"></i></a></td>
                     </tr>
                 {% endfor %}
                 <tr>
@@ -31,9 +36,11 @@
                         </select>
                     </td>
                     <td><input type="number" name="occupancy" placeholder="occupancy" required></td>
+                    <td></td>
+                    <td></td>
                 </tr>
             </table>
-        <input type="submit" value="Add Stadium">
+        <input class="btn btn-primary" type="submit" value="Add Stadium">
     </div>
     
 {% endblock %}

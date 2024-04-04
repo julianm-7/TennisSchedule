@@ -4,27 +4,32 @@
 
 {% block content %}
     <div class="container">
+        <br>
         <h3>Other Data</h3>
         <h5>Plays At</h5>
-        <form>
+        <form action="{{url_for('addPlaysAt')}}" method="POST">
             <table class="table table-bordered blackBorder">
                 <thead>
                     <td>Player</td>
                     <td>Stadium</td>
+                    <td>Edit</td>
+                    <td>Delete</td>
                 </thead>
                     
                 {% for row in playsAt %}
                     <tr>
                     <td>{{row['name']}}</td>
                     <td>{{row['stadiumName']}}</td>
+                    <td><a href="/editPlaysAt/{{row['playerID']}}" class="btn btn-secondary"><i class="bi bi-pencil"></i></a></td>
+                    <td><a href="/deletePlaysAt/{{row['playerID']}}-{{row['tournamentName']}}" class="btn btn-danger"><i class="bi bi-trash3"></i></a></td>
                     </tr>
                 {% endfor %}
                 <tr>
                     <td>
                         <select name="player" id="player-select" required>
-                           <option disabled selected value="">Player</option>
+                           <option selected value="">Player</option>
                            {% for row in players %}
-                                <option value="{{row['playerId']}}">{{row['name']}}</option>
+                                <option value="{{row['playerID']}}">{{row['name']}}</option>
                            {% endfor %}
                         </select>
                     </td>
@@ -36,9 +41,11 @@
                            {% endfor %}
                         </select>
                     </td>
+                    <td></td>
+                    <td></td>
                 </tr>
             </table>
-            <input type="submit" value="Add">
+            <input class="btn btn-primary" type="submit" value="Add">
         </form>
         <br>
 
@@ -75,7 +82,7 @@
                     </td>
                 </tr>
             </table>
-            <input type="submit" value="Add">
+            <input class="btn btn-primary" type="submit" value="Add">
         </form>
         <br>
 
@@ -98,7 +105,7 @@
                         <select name="player" id="player-select" required>
                            <option disabled selected value="">Player</option>
                            {% for row in players %}
-                                <option value="{{row['playerId']}}">{{row['name']}}</option>
+                                <option value="{{row['playerID']}}">{{row['name']}}</option>
                            {% endfor %}
                         </select>
                     </td>
@@ -112,7 +119,7 @@
                     </td>
                 </tr>
             </table>
-            <input type="submit" value="Add">
+            <input class="btn btn-primary" type="submit" value="Add">
         </form>
     </div>
         

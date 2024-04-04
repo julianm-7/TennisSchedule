@@ -1,5 +1,5 @@
 from setup import database
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 import sqlite3 as sql
 from Format import FormatDate
 import traceback
@@ -50,6 +50,27 @@ def players():
             con.close()
             
     return render_template("players.html", rows = rows, path = '/players')
+
+@app.route('/delete-player/<playerID>')
+def deletePlayer(playerID):
+    if request.method =='GET':
+        try:
+            con = database()
+            cur = con.cursor()
+            cur.execute('DELETE FROM Player WHERE playerID = %s', (playerID,))
+            con.commit()
+            
+        except Exception as e:
+            con.rollback()
+            # For debugging purposes, print or log the traceback
+            print("Exception occurred:", e)
+            traceback.print_exc()
+            print('exception')
+        
+        finally:
+            con.close()
+            
+    return redirect('/players')
         
 @app.route('/tournaments', methods = ['GET', 'POST'])
 def tournaments():
@@ -101,6 +122,27 @@ def tournaments():
     
     return render_template("tournaments.html", rows = rows, path = '/tournaments')
 
+@app.route('/delete-tournament/<tournamentName>')
+def deleteTournament(tournamentName):
+    if request.method =='GET':
+        try:
+            con = database()
+            cur = con.cursor()
+            cur.execute('DELETE FROM Tournament WHERE tournamentName = %s', (tournamentName,))
+            con.commit()
+            
+        except Exception as e:
+            con.rollback()
+            # For debugging purposes, print or log the traceback
+            print("Exception occurred:", e)
+            traceback.print_exc()
+            print('exception')
+        
+        finally:
+            con.close()
+            
+    return redirect('/tournaments')
+
 @app.route('/stadiums', methods = ["GET", "POST"])
 def stadiums():
     if request.method == "GET":
@@ -137,6 +179,27 @@ def stadiums():
     
     return render_template("stadiums.html", rows = rows, path = '/stadiums')
 
+@app.route('/delete-stadium/<stadiumName>')
+def deleteStadium(stadiumName):
+    if request.method =='GET':
+        try:
+            con = database()
+            cur = con.cursor()
+            cur.execute('DELETE FROM Stadium WHERE stadiumName = %s', (stadiumName,))
+            con.commit()
+            
+        except Exception as e:
+            con.rollback()
+            # For debugging purposes, print or log the traceback
+            print("Exception occurred:", e)
+            traceback.print_exc()
+            print('exception')
+        
+        finally:
+            con.close()
+            
+    return redirect('/stadiums')
+
 @app.route('/other')
 def other():
     con = database()
@@ -159,6 +222,37 @@ def other():
     con.close()
     return render_template('other.html', playsAt = playsAt, hostedAt = hostedAt, competesIn = competesIn, 
                            players = players, tournaments = tournaments, stadiums = stadiums, path = '/other')
+    
+@app.route('/other/addPlaysAt', methods = ['GET', 'POST'])
+def addPlaysAt():
+    if request.method == 'POST':
+        try:
+            con = database()
+            cur = con.cursor()
+            
+            player = request.form['player']
+            stadium = request.form['stadium']
+            print(player)
+            print(stadium)
+            
+            cur.execute('INSERT INTO PlaysAt (playerID, stadiumName)\
+                VALUES (%s , %s)', (player, stadium))
+            
+            con.commit()
+            
+        except Exception as e:
+            con.rollback()
+            # For debugging purposes, print or log the traceback
+            print("Exception occurred:", e)
+            traceback.print_exc()
+            print('exception')
+        
+        finally:
+            con.close()
+        
+    return redirect('/other')
+            
+            
 
 if __name__ == '__main__':
     app.run(debug = True)

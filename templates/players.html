@@ -4,6 +4,7 @@
  
 {% block content %}
     <div class="container">
+        <br>
         <h3>Players</h3>
         <form action="{{url_for('players')}}" method="POST">
             <table class=" table table-bordered blackBorder">
@@ -14,6 +15,8 @@
                     <td>Age</td>
                     <td>Gender</td>
                     <td>Home Country</td>
+                    <td>Edit</td>
+                    <td>Delete</td>
                 </thead>
                     
                 {% for row in rows %}
@@ -23,7 +26,9 @@
                         <td>{{row['ranking']}}</td>
                         <td>{{row['age']}}</td>
                         <td>{{row['gender']}}</td>
-                        <td>{{row['originCountry']}}</td>		
+                        <td>{{row['originCountry']}}</td>
+                        <td><a href="/edit-player/{{row['playerID']}}" class="btn btn-secondary"><i class="bi bi-pencil"></i></a></td>
+                        <td><a href="/delete-player/{{row['playerID']}}" class="btn btn-danger"><i class="bi bi-trash3"></i></a></td>		
                     </tr>
                 {% endfor %}
                 <tr>
@@ -39,9 +44,11 @@
                         </select>
                     </td>
                     <td><input type="text" name="country" placeholder="home country" required></td>
+                    <td></td>
+                    <td></td>
                 </tr>
             </table>
-            <input type="submit" value="Add Player">
+            <input class="btn btn-primary "type="submit" value="Add Player">
         </form>
     </div>
 {% endblock %}

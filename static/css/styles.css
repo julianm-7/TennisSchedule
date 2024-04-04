@@ -5,3 +5,19 @@
 .blackBorder thead {
     font-weight: bold;
 }
+
+.table-row {
+    position: relative;
+}
+
+.delete-button-container {
+    position: absolute;
+    left: -50px; /* Adjust this value based on your needs */
+    top: 50%;
+    transform: translateY(-50%);
+    visibility: hidden;
+}
+
+.table-row:hover .delete-button-container {
+    visibility: visible;
+}

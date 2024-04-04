@@ -46,8 +46,8 @@ if __name__ == '__main__':
         losses INT,
         date DATE,
         PRIMARY KEY (playerID, tournamentName),
-        FOREIGN KEY (playerID) REFERENCES Player(playerID),
-        FOREIGN KEY (tournamentName) REFERENCES Tournament(tournamentName));""")
+        FOREIGN KEY (playerID) REFERENCES Player(playerID) ON DELETE CASCADE,
+        FOREIGN KEY (tournamentName) REFERENCES Tournament(tournamentName) ON DELETE CASCADE);""")
         
     cur.execute("""CREATE TABLE PlaysAt(
         playerID INT,
@@ -55,15 +55,15 @@ if __name__ == '__main__':
         wins INT,
         losses INT,
         PRIMARY KEY (playerID, stadiumName),
-        FOREIGN KEY (playerID) REFERENCES Player(playerID),
-        FOREIGN KEY (stadiumName) REFERENCES Stadium(stadiumName));""")
+        FOREIGN KEY (playerID) REFERENCES Player(playerID) ON DELETE CASCADE,
+        FOREIGN KEY (stadiumName) REFERENCES Stadium(stadiumName) ON DELETE CASCADE);""")
         
     cur.execute("""CREATE TABLE HostedAt(
         tournamentName VARCHAR(64),
         stadiumName VARCHAR(64),
         PRIMARY KEY (tournamentName, stadiumName),
-        FOREIGN KEY (tournamentName) REFERENCES Tournament(tournamentName),
-        FOREIGN KEY (stadiumName) REFERENCES Stadium(stadiumName));""")
+        FOREIGN KEY (tournamentName) REFERENCES Tournament(tournamentName) ON DELETE CASCADE,
+        FOREIGN KEY (stadiumName) REFERENCES Stadium(stadiumName) ON DELETE CASCADE);""")
     '''    
     conn.close()
 

@@ -4,6 +4,7 @@
 
 {% block content %}
     <div class="container">
+        <br>
         <h3>Tournaments</h3>
         <form action="{{url_for('tournaments')}}" method="POST">
             <table class="table table-bordered blackBorder">
@@ -13,6 +14,8 @@
                     <td>Registration Closes</td>
                     <td>Cost</td>
                     <td>Country</td>
+                    <td>Edit</td>
+                    <td>Delete</td>
                 </thead>
                     
                 {% for row in rows %}
@@ -22,6 +25,8 @@
                     <td>{{row['deadlineDate']}}</td>
                     <td>${{row['cost']}}</td>
                     <td>{{row['country']}}</td>
+                    <td><a href="/edit-tournament/{{row['tournamentName']}}" class="btn btn-secondary"><i class="bi bi-pencil"></i></a></td>
+                    <td><a href="/delete-tournament/{{row['tournamentName']}}" class="btn btn-danger"><i class="bi bi-trash3"></i></a></td>
                     </tr>
                 {% endfor %}
                 <tr>
@@ -30,9 +35,11 @@
                     <td><input type="date" name="closes" placeholder="closes" required></td>
                     <td>$<input type="number" name="cost" placeholder="cost" required></td>
                     <td><input type="text" name="country" placeholder="country" required></td>
+                    <td></td>
+                    <td></td>
                 </tr>
             </table>
-            <input type="submit" value="Add Tournament">
+            <input class="btn btn-primary" type="submit" value="Add Tournament">
         </form>
     </div>
 {% endblock %}
