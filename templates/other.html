@@ -3,6 +3,7 @@
 {% block title %}Other Data{% endblock %}
 
 {% block content %}
+
     <div class="container">
         <br>
         <h3>Other Data</h3>
@@ -20,8 +21,8 @@
                     <tr>
                     <td>{{row['name']}}</td>
                     <td>{{row['stadiumName']}}</td>
-                    <td><a href="/editPlaysAt/{{row['playerID']}}" class="btn btn-secondary"><i class="bi bi-pencil"></i></a></td>
-                    <td><a href="/deletePlaysAt/{{row['playerID']}}-{{row['tournamentName']}}" class="btn btn-danger"><i class="bi bi-trash3"></i></a></td>
+                    <td><a href="/editPlaysAt/{{row['playerID']}}-{{row['stadiumName']}}" class="btn btn-secondary"><i class="bi bi-pencil"></i></a></td>
+                    <td><a href="/deletePlaysAt/{{row['playerID']}}-{{row['stadiumName']}}" class="btn btn-danger"><i class="bi bi-trash3"></i></a></td>
                     </tr>
                 {% endfor %}
                 <tr>
@@ -50,17 +51,21 @@
         <br>
 
         <h5>Hosted At</h5>
-        <form>
+        <form action="{{url_for('addHostedAt')}}" method="POST">
             <table class="table table-bordered blackBorder">
                 <thead>
                     <td>Tournament</td>
                     <td>Stadium</td>
+                    <td>Edit</td>
+                    <td>Delete</td>
                 </thead>
                     
                 {% for row in hostedAt %}
                     <tr>
                     <td>{{row['tournamentName']}}</td>
                     <td>{{row['stadiumName']}}</td>
+                    <td><a href="/editHostedAt/{{row['tournamentName']}}-{{row['stadiumName']}}" class="btn btn-secondary"><i class="bi bi-pencil"></i></a></td>
+                    <td><a href="/deleteHostedAt/{{row['tournamentName']}}-{{row['stadiumName']}}" class="btn btn-danger"><i class="bi bi-trash3"></i></a></td>
                     </tr>
                 {% endfor %}
                 <tr>
@@ -80,6 +85,8 @@
                            {% endfor %}
                         </select>
                     </td>
+                    <td></td>
+                    <td></td>
                 </tr>
             </table>
             <input class="btn btn-primary" type="submit" value="Add">
@@ -87,17 +94,21 @@
         <br>
 
         <h5>Competes In</h5>
-        <form>
+        <form action="{{url_for('addCompetesIn')}}" method="POST">
             <table class="table table-bordered blackBorder">
                 <thead>
                     <td>Player</td>
                     <td>Tournament</td>
+                    <td>Edit</td>
+                    <td>Delete</td>
                 </thead>
                     
                 {% for row in competesIn %}
                     <tr>
                     <td>{{row['name']}}</td>
                     <td>{{row['tournamentName']}}</td>
+                    <td><a href="/editCompetesIn/{{row['playerID']}}-{{row['tournamentName']}}" class="btn btn-secondary"><i class="bi bi-pencil"></i></a></td>
+                    <td><a href="/deleteCompetesIn/{{row['playerID']}}-{{row['tournamentName']}}" class="btn btn-danger"><i class="bi bi-trash3"></i></a></td>
                     </tr>
                 {% endfor %}
                 <tr>
@@ -117,6 +128,8 @@
                            {% endfor %}
                         </select>
                     </td>
+                    <td></td>
+                    <td></td>
                 </tr>
             </table>
             <input class="btn btn-primary" type="submit" value="Add">

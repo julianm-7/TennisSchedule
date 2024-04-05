@@ -206,13 +206,13 @@ def other():
     con.row_factory = sql.Row
     cur = con.cursor(dictionary=True)
         
-    cur.execute('''SELECT name, stadiumName FROM PlaysAt,Player WHERE PlaysAt.playerID = Player.playerID''')
+    cur.execute('''SELECT PlaysAt.playerID, name, stadiumName FROM PlaysAt,Player WHERE PlaysAt.playerID = Player.playerID''')
     playsAt = cur.fetchall()
     cur.execute('''SELECT tournamentName, stadiumName FROM HostedAt''')
     hostedAt = cur.fetchall()
-    cur.execute('''SELECT name, tournamentName FROM CompetesIn, Player WHERE CompetesIn.playerID = Player.playerID''')
+    cur.execute('''SELECT CompetesIn.playerID, name, tournamentName FROM CompetesIn, Player WHERE CompetesIn.playerID = Player.playerID''')
     competesIn = cur.fetchall()
-    cur.execute('''SELECT name, playerId FROM Player''')
+    cur.execute('''SELECT name, playerID FROM Player''')
     players = cur.fetchall()
     cur.execute('''SELECT tournamentName FROM Tournament''')
     tournaments = cur.fetchall()
@@ -223,7 +223,7 @@ def other():
     return render_template('other.html', playsAt = playsAt, hostedAt = hostedAt, competesIn = competesIn, 
                            players = players, tournaments = tournaments, stadiums = stadiums, path = '/other')
     
-@app.route('/other/addPlaysAt', methods = ['GET', 'POST'])
+@app.route('/addPlaysAt', methods = ['GET', 'POST'])
 def addPlaysAt():
     if request.method == 'POST':
         try:
@@ -232,8 +232,6 @@ def addPlaysAt():
             
             player = request.form['player']
             stadium = request.form['stadium']
-            print(player)
-            print(stadium)
             
             cur.execute('INSERT INTO PlaysAt (playerID, stadiumName)\
                 VALUES (%s , %s)', (player, stadium))
@@ -251,8 +249,121 @@ def addPlaysAt():
             con.close()
         
     return redirect('/other')
+     
+@app.route('/deletePlaysAt/<playerID>-<stadiumName>')
+def deletePlaysAt(playerID, stadiumName):
+    try:
+        con = database()
+        cur = con.cursor()
+        
+        cur.execute('DELETE FROM PlaysAt WHERE playerID = %s AND stadiumName = %s', (playerID, stadiumName))
+        con.commit()
+         
+    except Exception as e:
+        con.rollback()
+        # For debugging purposes, print or log the traceback
+        print("Exception occurred:", e)
+        traceback.print_exc()
+        print('exception')
+        
+    finally:
+        con.close()
             
-            
+    return redirect('/other') 
 
+@app.route('/addHostedAt', methods = ['POST'])
+def addHostedAt():
+    if request.method == 'POST':
+        try:
+            con = database()
+            cur = con.cursor()
+            
+            tournament = request.form['tournament']
+            stadium = request.form['stadium']
+            
+            cur.execute('INSERT INTO HostedAt (tournamentName, stadiumName)\
+                VALUES (%s , %s)', (tournament, stadium))
+            
+            con.commit()
+            
+        except Exception as e:
+            con.rollback()
+            # For debugging purposes, print or log the traceback
+            print("Exception occurred:", e)
+            traceback.print_exc()
+            print('exception')
+        
+        finally:
+            con.close()
+        
+    return redirect('/other')
+
+@app.route('/deleteHostedAt/<tournamentName>-<stadiumName>')
+def deleteHostedAt(tournamentName, stadiumName):
+    try:
+        con = database()
+        cur = con.cursor()
+        
+        cur.execute('DELETE FROM HostedAt WHERE tournamentName = %s AND stadiumName = %s', (tournamentName, stadiumName))
+        con.commit()
+         
+    except Exception as e:
+        con.rollback()
+        # For debugging purposes, print or log the traceback
+        print("Exception occurred:", e)
+        traceback.print_exc()
+        print('exception')
+        
+    finally:
+        con.close()
+            
+    return redirect('/other') 
+
+@app.route('/addCompetesIn', methods = ['POST'])
+def addCompetesIn():
+    if request.method == 'POST':
+        try:
+            con = database()
+            cur = con.cursor()
+            
+            player = request.form['player']
+            tournament = request.form['tournament']
+            
+            cur.execute('INSERT INTO CompetesIn (playerID, tournamentName)\
+                VALUES (%s , %s)', (player, tournament))
+            con.commit()
+            
+        except Exception as e:
+            con.rollback()
+            # For debugging purposes, print or log the traceback
+            print("Exception occurred:", e)
+            traceback.print_exc()
+            print('exception')
+        
+        finally:
+            con.close()
+        
+    return redirect('/other')
+
+@app.route('/deleteCompetesIn/<playerID>-<tournamentName>')
+def deleteCompetesIn(playerID, tournamentName):
+    try:
+        con = database()
+        cur = con.cursor()
+        
+        cur.execute('DELETE FROM CompetesIn WHERE playerID = %s AND tournamentName = %s', (playerID, tournamentName))
+        con.commit()
+         
+    except Exception as e:
+        con.rollback()
+        # For debugging purposes, print or log the traceback
+        print("Exception occurred:", e)
+        traceback.print_exc()
+        print('exception')
+        
+    finally:
+        con.close()
+            
+    return redirect('/other') 
 if __name__ == '__main__':
     app.run(debug = True)
