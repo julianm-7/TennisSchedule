@@ -27,7 +27,8 @@
                         <td>{{row['age']}}</td>
                         <td>{{row['gender']}}</td>
                         <td>{{row['originCountry']}}</td>
-                        <td><a href="/edit-player/{{row['playerID']}}" class="btn btn-secondary"><i class="bi bi-pencil"></i></a></td>
+                        <!--<td><a href="/edit-player/{{row['playerID']}}" class="btn btn-secondary"><i class="bi bi-pencil"></i></a></td>-->
+                        <td><button onclick="editRow(this, '{{row['playerID']}}')" class="btn btn-secondary"><i class="bi bi-pencil"></i></button></td>
                         <td><a href="/delete-player/{{row['playerID']}}" class="btn btn-danger"><i class="bi bi-trash3"></i></a></td>		
                     </tr>
                 {% endfor %}
@@ -51,4 +52,100 @@
             <input class="btn btn-primary "type="submit" value="Add Player">
         </form>
     </div>
+
+    <script>
+        function editRow(button, playerID) {
+            var form = document.querySelector('form');
+            
+            var row = button.parentNode.parentNode;
+            var cells = row.querySelectorAll('td:not(:last-child)'); // Exclude the last two cells (Edit/Delete buttons)
+            
+            // Define an array of names corresponding to the data structure
+            var inputNames = ['name', 'ranking', 'age', 'gender', 'originCountry'];
+        
+            cells.forEach(function(cell, index) {
+                // Skip the first cell (playerID) and the last two cells (buttons)
+                if(index > 0 && index < cells.length - 1){
+                    var cellText = cell.textContent;
+                    // Create an input element and set its name based on the index
+                    var input = document.createElement('input');
+                    input.type = 'text';
+                    input.value = cellText;
+                    input.name = inputNames[index - 1]; // Adjust index since we're skipping the first cell
+        
+                    // Special handling for gender to replace with a select box
+                    if(input.name === 'gender'){
+                        input = document.createElement('select');
+                        input.name = 'gender';
+                        var optionMale = document.createElement('option');
+                        optionMale.value = "Male";
+                        optionMale.text = "Male";
+                        var optionFemale = document.createElement('option');
+                        optionFemale.value = "Female";
+                        optionFemale.text = "Female";
+                        input.appendChild(optionMale);
+                        input.appendChild(optionFemale);
+                        // Set the current value
+                        if(cellText.trim() === 'Male') {
+                            optionMale.selected = true;
+                        } else if(cellText.trim() === 'Female') {
+                            optionFemale.selected = true;
+                        }
+                    }
+        
+                    // Replace the cell's content with the new input element
+                    cell.innerHTML = '';
+                    cell.appendChild(input);
+                }
+            });
+        
+            // Update the button to a save button
+            button.innerHTML = '<i class="bi bi-save"></i>';
+            button.type = "button"; // Make sure this is a button that does not submit the form
+            button.onclick = function() { saveRow(this, playerID); };
+            form.noValidate = true;
+        }
+    
+        function saveRow(button, playerID) {
+            var row = button.parentNode.parentNode;
+            var inputs = row.querySelectorAll('input, select');
+            var data = { playerID: playerID };
+        
+            inputs.forEach(function(input) {
+                data[input.name] = input.value;
+                var cell = input.parentNode;
+                cell.textContent = input.options ? input.options[input.selectedIndex].text : input.value;
+            });
+    
+            // Send data to the server using Fetch API
+            fetch('/players', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Handle success response from the server if needed
+                console.log(data);
+            })
+            .catch(error => {
+                // Handle error from the server or network error
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    
+            // Revert the save button back to an edit button
+            button.innerHTML = '<i class="bi bi-pencil"></i>';
+            button.type = "button";
+            button.onclick = function() { editRow(this, playerID); };
+        }
+    </script>
+    
+        
 {% endblock %}

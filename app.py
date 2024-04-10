@@ -10,7 +10,7 @@ app = Flask(__name__)
 def home():
     return render_template('index.html', path = '/')
  
-@app.route('/players', methods = ['GET', 'POST'])
+@app.route('/players', methods = ['GET', 'POST', 'PUT'])
 def players():
     rows = ''
     if request.method == 'GET':
@@ -20,7 +20,8 @@ def players():
         cur.execute('''SELECT * FROM Player''')
         rows = cur.fetchall()
         con.close()
-        
+        return render_template("players.html", rows = rows, path = '/players')
+   
     elif request.method == 'POST':
         try:
             con = database()
@@ -35,8 +36,6 @@ def players():
             cur.execute('INSERT INTO Player(name, ranking, age, gender, originCountry)\
                 VALUES(%s,%s,%s,%s,%s)', (name, ranking, age, gender, country))
             con.commit()
-            
-            
         except Exception as e:
             con.rollback()
             # For debugging purposes, print or log the traceback
@@ -48,8 +47,32 @@ def players():
             cur.execute('''SELECT * FROM Player''')
             rows = cur.fetchall()
             con.close()
+            return render_template("players.html", rows = rows, path = '/players')
             
-    return render_template("players.html", rows = rows, path = '/players')
+    elif request.method == 'PUT':
+        try:
+            data = request.json
+            con = database()
+            cur = con.cursor(dictionary=True)
+            player = data.get('playerID')
+            name = data.get("name")
+            ranking = data.get("ranking")
+            age = data.get("age")
+            gender = data.get("gender")
+            country = data.get("originCountry")
+            cur.execute('UPDATE Player SET name = %s, ranking=%s, age=%s,gender=%s,OriginCountry=%s \
+                WHERE playerID=%s', (name, ranking, age, gender, country, player))
+            con.commit()
+        except Exception as e:
+            con.rollback()
+            # For debugging purposes, print or log the traceback
+            print("Exception occurred:", e)
+            traceback.print_exc()
+            print('exception')
+        finally:
+            con.close()
+            
+
 
 @app.route('/delete-player/<playerID>')
 def deletePlayer(playerID):
