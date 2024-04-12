@@ -21,7 +21,7 @@
                     <td>{{row['stadiumName']}}</td>
                     <td>{{row['surface']}}</td>
                     <td>{{row['occupancy']}}</td>
-                    <td><button onclick="editRow(this, '{{row['stadiumName']}}')" class="btn btn-secondary"><i class="bi bi-pencil"></i></button></td>l"></i></a></td>
+                    <td><button onclick="editRow(this, '{{row['stadiumName']}}')" class="btn btn-secondary"><i class="bi bi-pencil"></i></button></td>
                     <td><a href="/delete-stadium/{{row['stadiumName']}}" class="btn btn-danger"><i class="bi bi-trash3"></i></a></td>
                     </tr>
                 {% endfor %}
@@ -54,29 +54,28 @@
             var inputNames = ['surface', 'occupancy'];
         
             cells.forEach(function(cell, index) {
-                // Skip the first cell (playerID) and the last two cells (buttons)
+                // Skip the first cell (stadiumName) and the last two cells (buttons)
                 if(index > 0 && index < cells.length - 1){
                     var cellText = cell.textContent;
                     // Create an input element and set its name based on the index
                     var input = document.createElement('input');
                     input.type = 'text';
                     input.value = cellText;
-                    input.name = inputNames[index]; // Adjust index since we're skipping the first cell
+                    input.name = inputNames[index - 1]; // Adjust index since we're skipping the first cell
         
                     // Special handling for gender to replace with a select box
                     if(input.name === 'surface'){
                         input = document.createElement('select');
                         input.name = 'surface';
                         var optionHard = document.createElement('option');
-                        optionMale.value = "Hard";
-                        optionMale.text = "Hard";
+                        optionHard.value = "Hard";
+                        optionHard.text = "Hard";
                         var optionClay = document.createElement('option');
-                        optionFemale.value = "Clay";
-                        optionFemale.text = "Clay";
+                        optionClay.value = "Clay";
+                        optionClay.text = "Clay";
                         var optionGrass = document.createElement('option');
-                        optionFemale.value = "Grass";
-                        optionFemale.text = "Grass";
-
+                        optionGrass.value = "Grass";
+                        optionGrass.text = "Grass";
                         input.appendChild(optionHard);
                         input.appendChild(optionClay);
                         input.appendChild(optionGrass);
