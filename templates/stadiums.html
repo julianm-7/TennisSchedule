@@ -21,7 +21,7 @@
                     <td>{{row['stadiumName']}}</td>
                     <td>{{row['surface']}}</td>
                     <td>{{row['occupancy']}}</td>
-                    <td><a href="/edit-stadium/{{row['stadiumName']}}" class="btn btn-secondary"><i class="bi bi-pencil"></i></a></td>
+                    <td><button onclick="editRow(this, '{{row['stadiumName']}}')" class="btn btn-secondary"><i class="bi bi-pencil"></i></button></td>
                     <td><a href="/delete-stadium/{{row['stadiumName']}}" class="btn btn-danger"><i class="bi bi-trash3"></i></a></td>
                     </tr>
                 {% endfor %}
@@ -42,5 +42,105 @@
             </table>
         <input class="btn btn-primary" type="submit" value="Add Stadium">
     </div>
+
+    <script>
+        function editRow(button, stadiumName) {
+            var form = document.querySelector('form');
+            
+            var row = button.parentNode.parentNode;
+            var cells = row.querySelectorAll('td:not(:last-child)'); // Exclude the last two cells (Edit/Delete buttons)
+            
+            // Define an array of names corresponding to the data structure
+            var inputNames = ['surface', 'occupancy'];
+        
+            cells.forEach(function(cell, index) {
+                // Skip the first cell (stadiumName) and the last two cells (buttons)
+                if(index > 0 && index < cells.length - 1){
+                    var cellText = cell.textContent;
+                    // Create an input element and set its name based on the index
+                    var input = document.createElement('input');
+                    input.type = 'text';
+                    input.value = cellText;
+                    input.name = inputNames[index - 1]; // Adjust index since we're skipping the first cell
+        
+                    // Special handling for gender to replace with a select box
+                    if(input.name === 'surface'){
+                        input = document.createElement('select');
+                        input.name = 'surface';
+                        var optionHard = document.createElement('option');
+                        optionHard.value = "Hard";
+                        optionHard.text = "Hard";
+                        var optionClay = document.createElement('option');
+                        optionClay.value = "Clay";
+                        optionClay.text = "Clay";
+                        var optionGrass = document.createElement('option');
+                        optionGrass.value = "Grass";
+                        optionGrass.text = "Grass";
+                        input.appendChild(optionHard);
+                        input.appendChild(optionClay);
+                        input.appendChild(optionGrass);
+                        // Set the current value
+                        if(cellText.trim() === 'Hard') {
+                            optionHard.selected = true;
+                        } else if(cellText.trim() === 'Clay') {
+                            optionClay.selected = true;
+                        } else if(cellText.trim() === 'Grass') {
+                            optionGrass.selected = true;
+                        }
+                    }
+        
+                    // Replace the cell's content with the new input element
+                    cell.innerHTML = '';
+                    cell.appendChild(input);
+                }
+            });
+        
+            // Update the button to a save button
+            button.innerHTML = '<i class="bi bi-save"></i>';
+            button.type = "button"; // Make sure this is a button that does not submit the form
+            button.onclick = function() { saveRow(this, stadiumName); };
+            form.noValidate = true;
+        }
+    
+        function saveRow(button, stadiumName) {
+            var row = button.parentNode.parentNode;
+            var inputs = row.querySelectorAll('input, select');
+            var data = { stadiumName: stadiumName };
+        
+            inputs.forEach(function(input) {
+                data[input.name] = input.value;
+                var cell = input.parentNode;
+                cell.textContent = input.options ? input.options[input.selectedIndex].text : input.value;
+            });
+    
+            // Send data to the server using Fetch API
+            fetch('/stadiums', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Handle success response from the server if needed
+                console.log(data);
+            })
+            .catch(error => {
+                // Handle error from the server or network error
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    
+            // Revert the save button back to an edit button
+            button.innerHTML = '<i class="bi bi-pencil"></i>';
+            button.type = "button";
+            button.onclick = function() { editRow(this, stadiumName); };
+        }
+    </script>
     
 {% endblock %}

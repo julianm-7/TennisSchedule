@@ -166,7 +166,7 @@ def deleteTournament(tournamentName):
             
     return redirect('/tournaments')
 
-@app.route('/stadiums', methods = ["GET", "POST"])
+@app.route('/stadiums', methods = ["GET", "POST", "PUT"])
 def stadiums():
     if request.method == "GET":
         con = database()
@@ -175,6 +175,7 @@ def stadiums():
         cur.execute('''SELECT * FROM Stadium''')
         rows = cur.fetchall()
         con.close()
+        return render_template("stadiums.html", rows = rows, path = '/stadiums')
     elif request.method == 'POST':
         try:
             con = database()
@@ -199,8 +200,29 @@ def stadiums():
             cur.execute('''SELECT * FROM Stadium''')
             rows = cur.fetchall()
             con.close()
+        return render_template("stadiums.html", rows = rows, path = '/stadiums')
+    elif request.method == 'PUT':
+        try:
+            data = request.json
+            con = database()
+            cur = con.cursor(dictionary=True)
+            stadium = data.get('stadiumName')
+            surface = data.get("surface")
+            occupancy = data.get("occupancy")
+            
+            cur.execute('UPDATE Stadium SET surface = %s, occupancy=%s\
+                WHERE stadiumName=%s', (surface, occupancy, stadium))
+            con.commit()
+        except Exception as e:
+            con.rollback()
+            # For debugging purposes, print or log the traceback
+            print("Exception occurred:", e)
+            traceback.print_exc()
+            print('exception')
+        finally:
+            con.close()
     
-    return render_template("stadiums.html", rows = rows, path = '/stadiums')
+
 
 @app.route('/delete-stadium/<stadiumName>')
 def deleteStadium(stadiumName):
