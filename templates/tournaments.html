@@ -25,7 +25,7 @@
                     <td>{{row['deadlineDate']}}</td>
                     <td>${{row['cost']}}</td>
                     <td>{{row['country']}}</td>
-                    <td><a href="/edit-tournament/{{row['tournamentName']}}" class="btn btn-secondary"><i class="bi bi-pencil"></i></a></td>
+                    <td><button onclick="editRow(this, '{{row['tournamentName']}}')" class="btn btn-secondary"><i class="bi bi-pencil"></i></button></td>
                     <td><a href="/delete-tournament/{{row['tournamentName']}}" class="btn btn-danger"><i class="bi bi-trash3"></i></a></td>
                     </tr>
                 {% endfor %}
@@ -42,4 +42,96 @@
             <input class="btn btn-primary" type="submit" value="Add Tournament">
         </form>
     </div>
+
+    <script>
+        function editRow(button, tournamentName) {
+            var form = document.querySelector('form');
+        
+            var row = button.parentNode.parentNode;
+            var cells = row.querySelectorAll('td:not(:last-child)'); // Exclude the last two cells (Edit/Delete buttons)
+        
+            // Define an array of names corresponding to the data structure
+            var inputNames = ['opens', 'closes', 'cost', 'country']; // Adjusted inputNames array
+        
+            cells.forEach(function(cell, index) {
+                // Skip the last two cells (Edit/Delete buttons)
+                if (index > 0 && index < cells.length - 1) {
+                    var cellText = cell.textContent;
+                    // Create an input element and set its name based on the index
+                    var input = document.createElement('input');
+                    if (inputNames[index - 1] === 'opens' || inputNames[index - 1] === 'closes') { // Check if the current input is for opens or closes date
+                        input.type = 'date'; // Set input type as date
+                    } else {
+                        input.type = 'text';
+                    }
+                    input.value = cellText;
+                    input.name = inputNames[index - 1]; // Adjust index since we're skipping the first cell
+        
+                    // Replace the cell's content with the new input element
+                    cell.innerHTML = '';
+                    cell.appendChild(input);
+                }
+            });
+        
+            // Update the button to a save button
+            button.innerHTML = '<i class="bi bi-save"></i>';
+            button.type = "button"; // Make sure this is a button that does not submit the form
+            button.onclick = function() { saveRow(this, tournamentName); };
+            form.noValidate = true;
+        }
+        
+        function saveRow(button, tournamentName) {
+            var row = button.parentNode.parentNode;
+            var inputs = row.querySelectorAll('input, select');
+            var data = { tournamentName: tournamentName };
+        
+            inputs.forEach(function(input) {
+                if (input.type === 'date') {
+                    // Format the date to match ISO format (YYYY-MM-DD)
+                    data[input.name] = input.value;
+                } else {
+                    data[input.name] = input.value;
+                }
+                var cell = input.parentNode;
+                cell.textContent = input.options ? input.options[input.selectedIndex].text : input.value;
+            });
+        
+            // Revert the save button back to an edit button
+            button.innerHTML = '<i class="bi bi-pencil"></i>';
+            button.type = "button";
+            button.onclick = function() { editRow(this, stadiumName); };
+            // Send data to the server using Fetch API
+            fetch('/tournaments', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => {
+                if (response.status === 302) {
+                    // Redirect response
+                    window.location.href = response.headers.get('Location');
+                } else if (response.ok) {
+                    // Successful response
+                    return response.json(); // Parse response JSON data
+                } else {
+                    // Error response
+                    throw new Error('Network response was not ok');
+                }
+            })
+            .then(data => {
+                // Handle success response if needed
+                console.log(data);
+            })
+            .catch(error => {
+                // Handle network error or error response
+                console.error('There was a problem with the fetch operation:', error);
+            });
+            
+            
+                      
+        }        
+    </script>
+    
 {% endblock %}

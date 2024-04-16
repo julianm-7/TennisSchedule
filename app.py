@@ -1,5 +1,5 @@
 from setup import database
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, jsonify
 import sqlite3 as sql
 from Format import FormatDate
 import traceback
@@ -95,7 +95,7 @@ def deletePlayer(playerID):
             
     return redirect('/players')
         
-@app.route('/tournaments', methods = ['GET', 'POST'])
+@app.route('/tournaments', methods = ['GET', 'POST','PUT'])
 def tournaments():
     rows = ''
     if request.method == 'GET':
@@ -110,6 +110,7 @@ def tournaments():
         for row in rows:
             row['registrationDate'] = FormatDate(row['registrationDate'])
             row['deadlineDate'] = FormatDate(row['deadlineDate'])
+        return render_template("tournaments.html", rows = rows, path = '/tournaments')
             
     elif request.method == 'POST':
         try:
@@ -142,8 +143,39 @@ def tournaments():
             for row in rows:
                 row['registrationDate'] = FormatDate(row['registrationDate'])
                 row['deadlineDate'] = FormatDate(row['deadlineDate'])
-    
-    return render_template("tournaments.html", rows = rows, path = '/tournaments')
+            return render_template("tournaments.html", rows = rows, path = '/tournaments')
+                
+    elif request.method == 'PUT':
+        try:
+            data = request.json
+            print(data)
+            con = database()
+            cur = con.cursor(dictionary=True)
+            tournament = data.get('tournamentName')
+            print(tournament)
+            opens = data.get('opens')
+            closes = data.get('closes')
+            print(closes)
+            cost = data.get('cost')
+            cost = cost[1:]
+            country = data.get('country')
+            print(country)
+            
+            
+            cur.execute('UPDATE Tournament SET registrationDate = %s, deadlineDate=%s, cost=%s, country=%s\
+                WHERE tournamentName=%s', (opens, closes, cost, country, tournament))
+            con.commit()
+            return jsonify({'success': True}), 200
+        except Exception as e:
+            con.rollback()
+            # For debugging purposes, print or log the traceback
+            print("Exception occurred:", e)
+            traceback.print_exc()
+            print('exception')
+            return jsonify({'success': False, 'error': str(e)}), 500
+        finally:
+            con.close()
+
 
 @app.route('/delete-tournament/<tournamentName>')
 def deleteTournament(tournamentName):
