@@ -17,7 +17,9 @@ def players():
         con = database()
         con.row_factory = sql.Row
         cur = con.cursor(dictionary=True)
-        cur.execute('''SELECT * FROM Player''')
+        cur.execute("""SELECT Player.playerID, name, ranking, age, gender, originCountry, COALESCE(SUM(CompetesIn.wins), 0) AS totalWins
+            FROM Player LEFT JOIN CompetesIn ON Player.playerID = CompetesIn.playerID 
+            GROUP BY Player.playerID;""")
         rows = cur.fetchall()
         con.close()
         return render_template("players.html", rows = rows, path = '/players')
@@ -43,11 +45,8 @@ def players():
             traceback.print_exc()
             print('exception')
         finally:
-            con.row_factory = sql.Row
-            cur.execute('''SELECT * FROM Player''')
-            rows = cur.fetchall()
             con.close()
-            return render_template("players.html", rows = rows, path = '/players')
+            return redirect('/players')
             
     elif request.method == 'PUT':
         try:
@@ -287,7 +286,7 @@ def other():
     playsAt = cur.fetchall()
     cur.execute('''SELECT tournamentName, stadiumName FROM HostedAt''')
     hostedAt = cur.fetchall()
-    cur.execute('''SELECT CompetesIn.playerID, name, tournamentName FROM CompetesIn, Player WHERE CompetesIn.playerID = Player.playerID''')
+    cur.execute('''SELECT CompetesIn.playerID, name, tournamentName, wins FROM CompetesIn, Player WHERE CompetesIn.playerID = Player.playerID''')
     competesIn = cur.fetchall()
     cur.execute('''SELECT name, playerID FROM Player''')
     players = cur.fetchall()
@@ -405,9 +404,10 @@ def addCompetesIn():
             
             player = request.form['player']
             tournament = request.form['tournament']
+            wins = request.form['wins']
             
-            cur.execute('INSERT INTO CompetesIn (playerID, tournamentName)\
-                VALUES (%s , %s)', (player, tournament))
+            cur.execute('INSERT INTO CompetesIn (playerID, tournamentName, wins)\
+                VALUES (%s , %s, %s)', (player, tournament, wins))
             con.commit()
             
         except Exception as e:

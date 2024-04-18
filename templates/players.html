@@ -15,6 +15,7 @@
                     <td>Age</td>
                     <td>Gender</td>
                     <td>Home Country</td>
+                    <td>Total Wins</td>
                     <td>Edit</td>
                     <td>Delete</td>
                 </thead>
@@ -27,7 +28,7 @@
                         <td>{{row['age']}}</td>
                         <td>{{row['gender']}}</td>
                         <td>{{row['originCountry']}}</td>
-                        <!--<td><a href="/edit-player/{{row['playerID']}}" class="btn btn-secondary"><i class="bi bi-pencil"></i></a></td>-->
+                        <td>{{row['totalWins']}}</td>
                         <td><button onclick="editRow(this, '{{row['playerID']}}')" class="btn btn-secondary"><i class="bi bi-pencil"></i></button></td>
                         <td><a href="/delete-player/{{row['playerID']}}" class="btn btn-danger"><i class="bi bi-trash3"></i></a></td>		
                     </tr>
@@ -45,6 +46,7 @@
                         </select>
                     </td>
                     <td><input type="text" name="country" placeholder="home country" required></td>
+                    <td></td>
                     <td></td>
                     <td></td>
                 </tr>
@@ -65,7 +67,7 @@
         
             cells.forEach(function(cell, index) {
                 // Skip the first cell (playerID) and the last two cells (buttons)
-                if(index > 0 && index < cells.length - 1){
+                if(index > 0 && index < cells.length - 2){
                     var cellText = cell.textContent;
                     // Create an input element and set its name based on the index
                     var input = document.createElement('input');

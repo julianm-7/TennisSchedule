@@ -21,3 +21,11 @@
 .table-row:hover .delete-button-container {
     visibility: visible;
 }
+
+.centered-div {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+

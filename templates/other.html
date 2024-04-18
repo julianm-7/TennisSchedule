@@ -21,7 +21,7 @@
                     <tr>
                     <td>{{row['name']}}</td>
                     <td>{{row['stadiumName']}}</td>
-                    <td><a href="/editPlaysAt/{{row['playerID']}}-{{row['stadiumName']}}" class="btn btn-secondary"><i class="bi bi-pencil"></i></a></td>
+                    <td><button onclick="editRow(this, '{{row['playerID']}}-{{row['stadiumName']}}', {{ players }}, {{ tournaments }}, {{ stadiums }}, '{{'playsAt'}}')" class="btn btn-secondary"><i class="bi bi-pencil"></i></button></td>
                     <td><a href="/deletePlaysAt/{{row['playerID']}}-{{row['stadiumName']}}" class="btn btn-danger"><i class="bi bi-trash3"></i></a></td>
                     </tr>
                 {% endfor %}
@@ -64,7 +64,7 @@
                     <tr>
                     <td>{{row['tournamentName']}}</td>
                     <td>{{row['stadiumName']}}</td>
-                    <td><a href="/editHostedAt/{{row['tournamentName']}}-{{row['stadiumName']}}" class="btn btn-secondary"><i class="bi bi-pencil"></i></a></td>
+                    <td><button onclick="editRow(this, '{{row['tournamentName']}}-{{row['stadiumName']}}', {{ players }}, {{ tournaments }}, {{ stadiums }}, '{{'hostedAt'}}')" class="btn btn-secondary"><i class="bi bi-pencil"></i></button></td>
                     <td><a href="/deleteHostedAt/{{row['tournamentName']}}-{{row['stadiumName']}}" class="btn btn-danger"><i class="bi bi-trash3"></i></a></td>
                     </tr>
                 {% endfor %}
@@ -99,6 +99,7 @@
                 <thead>
                     <td>Player</td>
                     <td>Tournament</td>
+                    <td>Wins</td>
                     <td>Edit</td>
                     <td>Delete</td>
                 </thead>
@@ -107,7 +108,8 @@
                     <tr>
                     <td>{{row['name']}}</td>
                     <td>{{row['tournamentName']}}</td>
-                    <td><a href="/editCompetesIn/{{row['playerID']}}-{{row['tournamentName']}}" class="btn btn-secondary"><i class="bi bi-pencil"></i></a></td>
+                    <td>{{row['wins']}}</td>
+                    <td><button onclick="editRow(this, '{{row['playerID']}}-{{row['tournamentName']}}', {{ players }}, {{ tournaments }}, {{ stadiums }}, '{{'competesIn'}}')" class="btn btn-secondary"><i class="bi bi-pencil"></i></button></td>
                     <td><a href="/deleteCompetesIn/{{row['playerID']}}-{{row['tournamentName']}}" class="btn btn-danger"><i class="bi bi-trash3"></i></a></td>
                     </tr>
                 {% endfor %}
@@ -128,6 +130,7 @@
                            {% endfor %}
                         </select>
                     </td>
+                    <td><input type="number" name="wins" placeholder="wins" required></input></td>
                     <td></td>
                     <td></td>
                 </tr>
@@ -135,5 +138,118 @@
             <input class="btn btn-primary" type="submit" value="Add">
         </form>
     </div>
+
+    <script>
+        function editRow(button, id, players, tournaments, stadiums, table) {
+            console.log(table);
+            var form = button.closest('form');
+            var row = button.closest('tr');
+            var cells = row.querySelectorAll('td:not(:last-child)'); // Exclude the last two cells (Edit/Delete buttons)
+            var selectOptions = {}; // to store original select options
         
+            cells.forEach(function(cell, index) {
+                if (index >= 0 && index < cells.length - 1) {
+                    var cellText = cell.textContent;
+                    // create input element
+                    var input;
+                    if (index === 0) {
+                        input = document.createElement('select');
+                        var options = cell.querySelectorAll('option');
+                        if (table === "competesIn" || table === "playsAt") {
+                            players.forEach(function(player) {
+                                var newOption = document.createElement('option');
+                                newOption.value = player.playerID;
+                                newOption.text = player.name;
+                                input.appendChild(newOption);
+                            });
+                        }
+                        else {
+                            tournaments.forEach(function(tournament) {
+                                var newOption = document.createElement('option');
+                                newOption.value = tournament.tournamentName;
+                                newOption.text = tournament.tournamentName;
+                                input.appendChild(newOption);
+                            }); 
+                        }
+                        selectOptions[index] = cellText;
+                    } else if (index === 1) {
+                        input = document.createElement('select');
+                        var options = cell.querySelectorAll('option');
+                        if (table === "competesIn") {
+                            tournaments.forEach(function(tournament) {
+                                var newOption = document.createElement('option');
+                                newOption.value = tournament.tournamentName;
+                                newOption.text = tournament.tournamentName;
+                                input.appendChild(newOption);
+                            });
+                        } else {
+                            stadiums.forEach(function(stadium) {
+                                var newOption = document.createElement('option');
+                                newOption.value = stadium.stadiumName;
+                                newOption.text = stadium.stadiumName;
+                                input.appendChild(newOption);
+                            });
+                        }
+                    } else {
+                        input = document.createElement('input');
+                        input.type = 'text';
+                        input.value = cellText;
+                    }
+                    cell.innerHTML = ''; // clear the cell
+                    cell.appendChild(input); // add the input element
+                }
+            });
+        
+            // Update the button to a save button
+            button.innerHTML = '<i class="bi bi-save"></i>';
+            button.setAttribute('onclick', `saveRow(this, '${id}')`);
+        }
+    
+        function saveRow(button, id) {
+            var form = button.closest('form');
+            var row = button.closest('tr');
+            var inputs = row.querySelectorAll('input, select');
+            var data = { id: id };
+        
+            inputs.forEach(function(input, index) {
+                if (index > 0) {
+                    var cell = input.parentNode;
+                    var newValue = input.value;
+                    if (input.nodeName === 'SELECT') {
+                        newValue = input.options[input.selectedIndex].text;
+                    }
+                    cell.textContent = newValue;
+                    data[input.name] = input.value;
+                }
+            });
+    
+            // Send data to the server using Fetch API
+            fetch(form.getAttribute('action'), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Handle success response from the server if needed
+                console.log(data);
+            })
+            .catch(error => {
+                // Handle error from the server or network error
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    
+            // Revert the save button back to an edit button
+            button.innerHTML = '<i class="bi bi-pencil"></i>';
+            button.setAttribute('onclick', `editRow(this, '${id}')`);
+        }
+    </script>
+
 {% endblock %}
