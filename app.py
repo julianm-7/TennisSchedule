@@ -247,7 +247,7 @@ def dreamteam():
              FROM Player LEFT JOIN CompetesIn ON Player.playerID = CompetesIn.playerID \
              WHERE age > 35 \
              GROUP BY Player.playerID, name, ranking, age, gender, originCountry \
-             ORDER BY totalWins LIMIT 4;")
+             ORDER BY totalWins DESC LIMIT 4;")
         over35 = cur.fetchall()
 
         con.close()
