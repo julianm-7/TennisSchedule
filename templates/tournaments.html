@@ -6,6 +6,11 @@
     <div class="container">
         <br>
         <h3>Tournaments</h3>
+        <form action="{{url_for('tournaments', searchTerm='__searchTerm__')}}" method="GET">
+            <input type="text" name="searchTerm" placeholder="Search..." value="{{ searchTerm }}"></input>
+            <input class="btn btn-primary "type="submit" value="Search">
+        </form>
+        <hr>
         <form action="{{url_for('tournaments')}}" method="POST">
             <table class="table table-bordered blackBorder">
                 <thead>
@@ -20,7 +25,7 @@
                     
                 {% for row in rows %}
                     <tr>
-                    <td>{{row['tournamentName']}}</td>
+                    <td><a href="{{url_for('roster', tournamentName=row['tournamentName'])}}">{{row['tournamentName']}}</a></td>
                     <td>{{row['registrationDate']}}</td>
                     <td>{{row['deadlineDate']}}</td>
                     <td>${{row['cost']}}</td>

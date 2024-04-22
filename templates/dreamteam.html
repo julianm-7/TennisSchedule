@@ -1,0 +1,41 @@
+{% extends 'index.html' %}
+
+{% block title %}Dream Team{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+        <br>
+        <h3>Dream Team</h3>
+        <p>Build the most marketable tennis team! Take a look at the biggest names 
+            on the court right now. Here's who you'll want to keep an eye on...
+        </p>
+        <hr>
+        <h3>From rivals to teammates...</h3>
+        <p><strong>{{rivals[0]['name']}}</strong> and <strong>{{rivals[1]['name']}}</strong> went head-to-head in the final round of <strong>{{rivals[0]['tournamentName']}}</strong>, 
+        a spectacle that grossed a whopping <strong>${{rivals[0]['revenue']}}!</strong> Making these two get along is no easy task, but that's part of the fun! 
+        Audiences will go wild for this turn of events.</p>
+        <hr>
+        <h3>Up and coming...</h3>
+        <p>Place your bets on these under-25s with bright futures. They've got some of the highest win counts for their age.</p>
+            {% for row in under25 %}
+                {% if row['name'] not in rivals|map(attribute='name') %}
+                    <p>- <strong>{{row['name']}}</strong> of {{row['originCountry']}}: <strong>{{row['totalWins']}} career wins</strong></p>
+                {% endif %}
+            {% endfor %}
+        <hr>
+        
+        <h3>Tried and true...</h3>
+        <p>Nothing beats watching an expert at work. These players boast years of experience and are sure to draw faithful fans' attention!</p>
+        {% for row in over35 %}
+            {% if row['name'] not in rivals|map(attribute='name') %}
+                <p>- <strong>{{row['name']}}</strong> of {{row['originCountry']}}: <strong>{{row['totalWins']}} career wins</strong></p>
+            {% endif %}
+        {% endfor %}
+        {% for row in top10 %}
+
+
+        {% endfor %}
+    </div>
+
+{% endblock %}

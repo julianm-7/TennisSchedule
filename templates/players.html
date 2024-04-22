@@ -6,6 +6,18 @@
     <div class="container">
         <br>
         <h3>Players</h3>
+        <form action="{{url_for('players', searchTerm='__searchTerm__', sortBy='__sortBy__')}}" method="GET">
+            <input type="text" placeholder="Search..." name="searchTerm" value="{{ searchTerm }}"></input>
+            <input class="btn btn-primary "type="submit" value="Search">
+            <br><label for="sort">Sort By</label>
+            <select name="sortBy">
+                <option value=""></option>
+                <option value="ranking">Ranking</option>
+                <option value="age">Age</option>
+                <option value="country">Country</option>
+            </select>
+        </form>
+        <hr>
         <form action="{{url_for('players')}}" method="POST">
             <table class=" table table-bordered blackBorder">
                 <thead>

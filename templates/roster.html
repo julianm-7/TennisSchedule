@@ -1,0 +1,25 @@
+{% extends 'index.html' %}
+
+{% block title %}Tournament Roster{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+        <br>
+        <h3>Roster for {{tournamentName}}</h3>
+            <table class="table table-bordered blackBorder">
+                <thead>
+                    <td>Player</td>
+                    <td>Wins</td>
+                </thead>
+                    
+                {% for row in rows %}
+                    <tr>
+                    <td>{{row['name']}}</td>
+                    <td>{{row['wins']}}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+    </div>
+
+{% endblock %}

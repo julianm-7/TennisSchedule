@@ -13,16 +13,30 @@ def home():
 @app.route('/players', methods = ['GET', 'POST', 'PUT'])
 def players():
     rows = ''
+
     if request.method == 'GET':
+        if ('searchTerm' in request.args):
+            searchTerm = request.args['searchTerm']
+        else:
+            searchTerm = ""
+    
+        if ('sortBy' in request.args):
+            sortBy = request.args['sortBy']
+        else:
+            sortBy = "Player.PlayerID"
         con = database()
         con.row_factory = sql.Row
         cur = con.cursor(dictionary=True)
-        cur.execute("""SELECT Player.playerID, name, ranking, age, gender, originCountry, COALESCE(SUM(CompetesIn.wins), 0) AS totalWins
-            FROM Player LEFT JOIN CompetesIn ON Player.playerID = CompetesIn.playerID 
-            GROUP BY Player.playerID;""")
+
+        cur.execute("SELECT Player.playerID, name, ranking, age, gender, originCountry, COALESCE(SUM(CompetesIn.wins), 0) AS totalWins \
+             FROM Player LEFT JOIN CompetesIn ON Player.playerID = CompetesIn.playerID \
+             WHERE Player.name LIKE %s \
+             GROUP BY Player.playerID, name, ranking, age, gender, originCountry \
+             ORDER BY %s;", ('%' + searchTerm + '%', sortBy))
+
         rows = cur.fetchall()
         con.close()
-        return render_template("players.html", rows = rows, path = '/players')
+        return render_template("players.html", rows = rows, path = '/players', searchTerm = searchTerm)
    
     elif request.method == 'POST':
         try:
@@ -34,10 +48,18 @@ def players():
             age = request.form['age']
             gender = request.form['gender']
             country = request.form['country']
-                        
-            cur.execute('INSERT INTO Player(name, ranking, age, gender, originCountry)\
-                VALUES(%s,%s,%s,%s,%s)', (name, ranking, age, gender, country))
-            con.commit()
+            
+            #checks if the the ranking for the same gender already exists. players of the opposite sex can have the same ranking
+            cur.execute('SELECT * FROM Player WHERE EXISTS(SELECT * FROM Player WHERE ranking = %s\
+                AND gender = %s)', (ranking, gender))
+            players = cur.fetchall()
+            if players:
+                pass
+            else:
+                cur.execute('INSERT INTO Player(name, ranking, age, gender, originCountry)\
+                    VALUES(%s,%s,%s,%s,%s)', (name, ranking, age, gender, country))
+                con.commit()
+                
         except Exception as e:
             con.rollback()
             # For debugging purposes, print or log the traceback
@@ -70,8 +92,6 @@ def players():
             print('exception')
         finally:
             con.close()
-            
-
 
 @app.route('/delete-player/<playerID>')
 def deletePlayer(playerID):
@@ -102,14 +122,21 @@ def tournaments():
         con.row_factory = sql.Row
         cur = con.cursor(dictionary=True)
         
-        cur.execute('''SELECT * FROM Tournament''') 
+        if ('searchTerm' in request.args):
+            searchTerm = request.args['searchTerm']
+            cur.execute('''SELECT * FROM Tournament WHERE tournamentName LIKE "%%%s%%"''' % (searchTerm)) 
+        else:
+            cur.execute('''SELECT * FROM Tournament''') 
         rows = cur.fetchall()
         con.close()
         
         for row in rows:
             row['registrationDate'] = FormatDate(row['registrationDate'])
             row['deadlineDate'] = FormatDate(row['deadlineDate'])
-        return render_template("tournaments.html", rows = rows, path = '/tournaments')
+        if ('searchTerm' in request.args):
+            return render_template("tournaments.html", rows = rows, path = '/tournaments', searchTerm = request.args['searchTerm'])
+        else:
+            return render_template("tournaments.html", rows = rows, path = '/tournaments')
             
     elif request.method == 'POST':
         try:
@@ -126,7 +153,6 @@ def tournaments():
             cur.execute('INSERT INTO Tournament(tournamentName, registrationDate, deadlineDate, cost, country)\
                 VALUES(%s,%s,%s,%s,%s)', (name, opens, closes, cost, country))
             con.commit()
-            
             
         except Exception as e:
             con.rollback()
@@ -175,6 +201,57 @@ def tournaments():
         finally:
             con.close()
 
+@app.route('/roster/<tournamentName>')
+def roster(tournamentName):
+    if request.method == 'GET':
+        con = database()
+        con.row_factory = sql.Row
+        cur = con.cursor(dictionary=True)
+        cur.execute('''SELECT CompetesIn.playerID, name, tournamentName, wins FROM CompetesIn, Player
+            WHERE CompetesIn.playerID = Player.playerID AND CompetesIn.tournamentName = '%s'
+            ORDER BY CompetesIn.wins DESC''' % tournamentName)
+        rows = cur.fetchall()
+        con.close()
+        return render_template("roster.html", rows = rows, tournamentName = tournamentName, path = '/roster')
+
+@app.route('/dreamteam')
+def dreamteam():
+    if request.method == 'GET':
+        con = database()
+        con.row_factory = sql.Row
+        cur = con.cursor(dictionary=True)
+
+        # Get the top 10 players by ranking
+        cur.execute('SELECT * FROM Player ORDER BY ranking LIMIT 10')
+        top10 = cur.fetchall()
+
+        # Get the top 5 players (by wins) under 25
+        cur.execute("SELECT Player.playerID, name, ranking, age, gender, originCountry, COALESCE(SUM(CompetesIn.wins), 0) AS totalWins \
+             FROM Player LEFT JOIN CompetesIn ON Player.playerID = CompetesIn.playerID \
+             WHERE age < 25 \
+             GROUP BY Player.playerID, name, ranking, age, gender, originCountry \
+             ORDER BY totalWins DESC LIMIT 4;")
+
+        under25 = cur.fetchall()
+
+        # cur.execute(TOP 2 PLAYERS FROM BIGGEST MONEYMAKING TOURNAMENT)
+        cur.execute("""SELECT name, Tourney.tournamentName, revenue, wins FROM Player, CompetesIn, (SELECT Tournament.tournamentName, country, (cost*occupancy) AS revenue FROM Tournament, Stadium, HostedAt WHERE Tournament.tournamentName = HostedAt.tournamentName 
+        AND HostedAt.stadiumName = Stadium.stadiumName ORDER BY revenue DESC LIMIT 1) AS Tourney WHERE Tourney.tournamentName = CompetesIn.tournamentName
+        AND Player.playerID = CompetesIn.playerID ORDER BY wins DESC LIMIT 2""")
+       
+        rivals = cur.fetchall()
+        print(rivals)
+
+        # cur.execute(TOP 5 PLAYERS BY TOTAL WINS OVER 35)
+        cur.execute("SELECT Player.playerID, name, ranking, age, gender, originCountry, COALESCE(SUM(CompetesIn.wins), 0) AS totalWins \
+             FROM Player LEFT JOIN CompetesIn ON Player.playerID = CompetesIn.playerID \
+             WHERE age > 35 \
+             GROUP BY Player.playerID, name, ranking, age, gender, originCountry \
+             ORDER BY totalWins LIMIT 4;")
+        over35 = cur.fetchall()
+
+        con.close()
+        return render_template("dreamteam.html", path = '/dreamteam', top10 = top10, under25 = under25, over35 = over35, rivals = rivals)
 
 @app.route('/delete-tournament/<tournamentName>')
 def deleteTournament(tournamentName):
@@ -203,10 +280,17 @@ def stadiums():
         con = database()
         con.row_factory = sql.Row
         cur = con.cursor(dictionary=True)
-        cur.execute('''SELECT * FROM Stadium''')
+        if ('searchTerm' in request.args):
+            searchTerm = request.args['searchTerm']
+            cur.execute('''SELECT * FROM Stadium WHERE stadiumName LIKE "%%%s%%"''' % searchTerm)
+        else:
+            cur.execute('''SELECT * FROM Stadium''')
         rows = cur.fetchall()
         con.close()
-        return render_template("stadiums.html", rows = rows, path = '/stadiums')
+        if ('searchTerm' in request.args):
+            return render_template("stadiums.html", rows = rows, path = '/stadiums', searchTerm = request.args['searchTerm'])
+        else:
+            return render_template("stadiums.html", rows = rows, path = '/stadiums')
     elif request.method == 'POST':
         try:
             con = database()
