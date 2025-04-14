@@ -1,4 +1,4 @@
-#Tennis Tournament Scheduling Application
+# Tennis Tournament Scheduling Application
 The purpose of this application was to demonstrate our knowledge of a relational database and SQL in which our group chose MySQL as the language.
 With previous experience doing front end with Flask in Python from my PetSitter project, I encouraged the group to use these tools to create our appication.
 Boostrap was used to quickly create a smooth modern theme for our application to focus our resources on the functionality of the application with some 
